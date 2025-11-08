@@ -8,29 +8,42 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.6'
+          channel: "stable"
+          cache: true
 
-      - name: Flutter clean
-        run: flutter clean
+      # Cria um novo app Flutter limpo
+      - name: Create Flutter project
+        run: flutter create app
 
-      - name: Pub get
+      # Copia seu código para dentro do novo app
+      - name: Copy project files
+        run: |
+          rm -rf app/lib
+          cp -R lib app/lib
+          cp pubspec.yaml app/pubspec.yaml
+
+      - name: Get dependencies
+        working-directory: app
         run: flutter pub get
 
-      - name: Analyze
+      - name: Analyze code
+        working-directory: app
         run: flutter analyze
 
       - name: Build release APK
+        working-directory: app
         run: flutter build apk --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: app/build/app/outputs/flutter-apk/app-release.apk
