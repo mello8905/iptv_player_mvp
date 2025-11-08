@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
-import 'screens/playlist_screen.dart';
-import 'screens/player_screen.dart';
+import 'package:iptv_player_mvp/screens/login_screen.dart';
+import 'package:iptv_player_mvp/screens/playlist_screen.dart';
+import 'package:iptv_player_mvp/screens/player_screen.dart';
 
 void main() {
   runApp(const MyApp());
