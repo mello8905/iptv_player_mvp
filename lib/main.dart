@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'services/supabase_init.dart';
 import 'screens/login_screen.dart';
-import 'screens/playlist_screen.dart';
-import 'screens/player_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initSupabase();
   runApp(const MyApp());
 }
 
@@ -14,16 +15,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'IPTV Player MVP',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginScreen(),
-        '/playlist': (context) => const PlaylistScreen(),
-        '/player': (context) => const PlayerScreen(),
-      },
+      title: 'IBO MAX',
+      theme: ThemeData.dark(),
+      home: const LoginScreen(),
     );
   }
 }
