@@ -1,56 +1,56 @@
 name: Build Android APK (Flutter)
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
+  push:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Set up job
         uses: actions/checkout@v4
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
-          cache: true
+          channel: stable
 
-      # Cria um novo app Flutter limpo
       - name: Create Flutter project
         run: flutter create app
 
-      # Remove a pasta de testes automáticos
       - name: Remove default tests
         run: rm -rf app/test
 
-      # Copia o seu código pro novo app
       - name: Copy project files
         run: |
           rm -rf app/lib
-          cp -R lib app/lib
+          mkdir -p app/lib
+          cp -r lib/* app/lib/
+          # Copia também o pubspec.yaml para a pasta app (ESSENCIAL)
           cp pubspec.yaml app/pubspec.yaml
+          # Se tiver assets, copia também
+          if [ -d assets ]; then
+            mkdir -p app/assets
+            cp -r assets/* app/assets/
+          fi
 
       - name: Get dependencies
         working-directory: app
         run: flutter pub get
 
-      # Analisa o código, mas não para em warnings
       - name: Analyze code
         working-directory: app
-        run: flutter analyze || true
+        run: flutter analyze
 
-      # Compila o APK de release
       - name: Build release APK
         working-directory: app
         run: flutter build apk --release
 
-      # Envia o APK gerado como artefato
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: app-release
           path: app/build/app/outputs/flutter-apk/app-release.apk
